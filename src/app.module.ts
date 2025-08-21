@@ -18,8 +18,8 @@ import { BusHandler } from './ai/handler/bus_handler.service';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
+      host: process.env.NODE_ENV === 'production' ? process.env.DATABASE_HOST : 'localhost',
+      port: parseInt(process.env.DATABASE_PORT || '3306'),
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PWD,
       database: 'our_vilage',
@@ -27,7 +27,9 @@ import { BusHandler } from './ai/handler/bus_handler.service';
       synchronize: false,
     }),
     ConfigModule.forRoot({
-      envFilePath: ['.env'],
+      envFilePath: process.env.NODE_ENV === 'production'
+        ? ['.env.production.local', '.env']
+        : ['.env', '.env.production.local'],
       isGlobal: true,
     }),
     BusRouteModule,
@@ -45,7 +47,7 @@ export class AppModule implements OnModuleInit {
     private readonly registry: RegistryService,
     private readonly weather: WeatherHandler,
     private readonly bus: BusHandler,
-  ) {}
+  ) { }
 
   onModuleInit() {
     // 핸들러 등록 (플러그인)
