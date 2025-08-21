@@ -13,6 +13,7 @@ import { PiplineModule } from './ai/pipline/pipline.module';
 import { HandlerModule } from './ai/handler/handler.module';
 import { RegistryModule } from './ai/registry/registry.module';
 import { BusHandler } from './ai/handler/bus_handler.service';
+import "dotenv/config";
 
 @Module({
   imports: [
@@ -27,9 +28,7 @@ import { BusHandler } from './ai/handler/bus_handler.service';
       synchronize: false,
     }),
     ConfigModule.forRoot({
-      envFilePath: process.env.NODE_ENV === 'production'
-        ? ['.env.production.local']
-        : ['.env'],
+      envFilePath: ['.env', '.env.production.local'],
       isGlobal: true,
     }),
     BusRouteModule,
