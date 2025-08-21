@@ -5,6 +5,15 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    # environment: 
+    #   - NODE_ENV=${NODE_ENV}
+    #   - PUBLIC_DATA_PORTAL_API_KEY_DECODING=${PUBLIC_DATA_PORTAL_API_KEY_DECODING}
+    #   - PUBLIC_DATA_PORTAL_API_KEY_ENCODING=${PUBLIC_DATA_PORTAL_API_KEY_ENCODING}
+    #   - OPENAI_API_KEY=${OPENAI_API_KEY}
+    #   - DATABASE_USER=${DATABASE_USER}
+    #   - DATABASE_PWD=${DATABASE_PWD}
+    #   - DATABASE_SCHEMA=${DATABASE_SCHEMA}
+    #   - DATABASE_HOST=${DATABASE_HOST}
     env_file:
       - .env.production.local
     restart: unless-stopped
