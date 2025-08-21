@@ -6,7 +6,7 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - .env
+      - .env.production.local
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]

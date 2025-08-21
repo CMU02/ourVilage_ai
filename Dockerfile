@@ -6,7 +6,6 @@ ARG PORT
 ARG OPENAI_API_KEY
 ARG PUBLIC_DATA_PORTAL_API_KEY_DECODING
 ARG PUBLIC_DATA_PORTAL_API_KEY_ENCODING
-ARG PUBLIC_DATA_PORTAL_API_KEY_ENCODING
 ARG DATABASE_PWD
 ARG DATABASE_SCHEMA
 ARG DATABASE_PORT
@@ -18,7 +17,6 @@ ENV NODE_ENV=$NODE_ENV \
     PORT=$PORT \
     OPENAI_API_KEY=$OPENAI_API_KEY \
     PUBLIC_DATA_PORTAL_API_KEY_DECODING=$PUBLIC_DATA_PORTAL_API_KEY_DECODING \
-    PUBLIC_DATA_PORTAL_API_KEY_ENCODING=$PUBLIC_DATA_PORTAL_API_KEY_ENCODING \
     PUBLIC_DATA_PORTAL_API_KEY_ENCODING=$PUBLIC_DATA_PORTAL_API_KEY_ENCODING \
     DATABASE_PWD=$DATABASE_PWD \
     DATABASE_SCHEMA=$DATABASE_SCHEMA \
@@ -43,6 +41,29 @@ RUN npm run build
 # Production stage
 FROM node:22-alpine AS production
 
+ARG NODE_ENV
+ARG PORT
+ARG OPENAI_API_KEY
+ARG PUBLIC_DATA_PORTAL_API_KEY_DECODING
+ARG PUBLIC_DATA_PORTAL_API_KEY_ENCODING
+ARG DATABASE_PWD
+ARG DATABASE_SCHEMA
+ARG DATABASE_PORT
+ARG DATABASE_USER
+ARG DATABASE_HOST
+
+# Environment variables
+ENV NODE_ENV=$NODE_ENV \
+    PORT=$PORT \
+    OPENAI_API_KEY=$OPENAI_API_KEY \
+    PUBLIC_DATA_PORTAL_API_KEY_DECODING=$PUBLIC_DATA_PORTAL_API_KEY_DECODING \
+    PUBLIC_DATA_PORTAL_API_KEY_ENCODING=$PUBLIC_DATA_PORTAL_API_KEY_ENCODING \
+    DATABASE_PWD=$DATABASE_PWD \
+    DATABASE_SCHEMA=$DATABASE_SCHEMA \
+    DATABASE_PORT=$DATABASE_PORT \
+    DATABASE_USER=$DATABASE_USER \
+    DATABASE_HOST=$DATABASE_HOST
+
 WORKDIR /app
 
 # Install dumb-init for proper signal handling
@@ -56,7 +77,7 @@ RUN adduser -S nestjs -u 1001
 COPY package*.json ./
 
 # Install only production dependencies
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --omit=dev && npm cache clean --force
 
 # Copy built application from builder stage
 COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
@@ -69,7 +90,7 @@ EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node dist/health-check.js || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
 
 # Start the application
 ENTRYPOINT ["dumb-init", "--"]
