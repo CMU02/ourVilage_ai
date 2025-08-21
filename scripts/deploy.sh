@@ -6,9 +6,9 @@ set -e
 echo "🚀 Starting deployment..."
 
 # 환경 변수 설정
-export IMAGE_TAG=${GITHUB_SHA:-latest}
+export IMAGE_TAG=${IMAGE_TAG:-latest}
 export REGISTRY=${REGISTRY:-ghcr.io}
-export IMAGE_NAME=${IMAGE_NAME:-mytown_ai}
+export IMAGE_NAME=${IMAGE_NAME:-cmu02/ourvilage_ai}
 
 echo "📦 Pulling latest image: $REGISTRY/$IMAGE_NAME:$IMAGE_TAG"
 
