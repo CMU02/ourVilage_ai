@@ -7,8 +7,17 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - PORT=3000
+      # - OPENAI_API_KEY
+      # - PUBLIC_DATA_PORTAL_API_KEY_DECODING
+      # - PUBLIC_DATA_PORTAL_API_KEY_ENCODING
+      # - DATABASE_PWD
+      # - DATABASE_SCHEMA
+      # - DATABASE_HOST
     env_file:
       - .env.production.local
+    # volumes:
+    #   - ./.env.production.local:/app/.env.production.local:ro
     # depends_on:
     #   - db
     restart: unless-stopped

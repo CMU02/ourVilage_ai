@@ -18,7 +18,7 @@ import { BusHandler } from './ai/handler/bus_handler.service';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.NODE_ENV === 'production' ? process.env.DATABASE_HOST : 'localhost',
+      host: process.env.DATABASE_HOST,
       port: parseInt(process.env.DATABASE_PORT || '3306'),
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PWD,
@@ -28,8 +28,8 @@ import { BusHandler } from './ai/handler/bus_handler.service';
     }),
     ConfigModule.forRoot({
       envFilePath: process.env.NODE_ENV === 'production'
-        ? ['.env.production.local', '.env']
-        : ['.env', '.env.production.local'],
+        ? ['.env.production.local']
+        : ['.env'],
       isGlobal: true,
     }),
     BusRouteModule,
