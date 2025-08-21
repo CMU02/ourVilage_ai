@@ -7,7 +7,8 @@ import { BusRouteService } from "./bus_route.service";
 @Module({
     imports: [TypeOrmModule.forFeature([BusRoute])],
     controllers: [BusRouteController],
-    providers: [BusRouteService]
+    providers: [BusRouteService],
+    exports: [BusRouteService]
 })
 
 export class BusRouteModule {};

@@ -11,6 +11,8 @@ import { BusRouteModule } from './bus_route/bus_route.module';
 import { WeatherModule } from './weather/weather.module';
 import { PiplineModule } from './ai/pipline/pipline.module';
 import { HandlerModule } from './ai/handler/handler.module';
+import { RegistryModule } from './ai/registry/registry.module';
+import { BusHandler } from './ai/handler/bus_handler.service';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { HandlerModule } from './ai/handler/handler.module';
       port: 3306,
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PWD,
-      database: 'mytown_ai',
+      database: 'our_vilage',
       entities: [BusRoute],
       synchronize: false,
     }),
@@ -33,6 +35,7 @@ import { HandlerModule } from './ai/handler/handler.module';
     WeatherModule,
     PiplineModule,
     HandlerModule,
+    RegistryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -41,10 +44,12 @@ export class AppModule implements OnModuleInit {
   constructor(
     private readonly registry: RegistryService,
     private readonly weather: WeatherHandler,
+    private readonly bus: BusHandler,
   ) {}
 
   onModuleInit() {
     // 핸들러 등록 (플러그인)
     this.registry.register('날씨', this.weather);
+    this.registry.register('버스', this.bus)
   }
 }

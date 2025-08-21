@@ -16,7 +16,7 @@ export class BusPosService {
   async getBusPosByRtidList(
     busRouteId: string,
   ): Promise<BusResponse<BusPosByRtid>> {
-    const response = await this.client.get('getBusPosByRtid', {
+    const response = await this.client.get('/getBusPosByRtid', {
       params: { busRouteId },
     });
 
