@@ -77,6 +77,17 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        build-args: |
+          NODE_ENV=production
+          PORT=3000
+          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+          PUBLIC_DATA_PORTAL_API_KEY_DECODING=${{ secrets.PUBLIC_DATA_PORTAL_API_KEY_DECODING }}
+          PUBLIC_DATA_PORTAL_API_KEY_ENCODING=${{ secrets.PUBLIC_DATA_PORTAL_API_KEY_ENCODING }}
+          DATABASE_PWD=${{ secrets.DATABASE_PWD }}
+          DATABASE_SCHEMA=${{ secrets.DATABASE_SCHEMA }}
+          DATABASE_PORT=${{ secrets.DATABASE_PORT }}
+          DATABASE_USER=${{ secrets.DATABASE_USER }}
+          DATABASE_HOST=${{ secrets.DATABASE_HOST }}
 
   # deploy:
   #   needs: build-and-push
