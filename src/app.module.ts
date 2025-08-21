@@ -1,5 +1,5 @@
 import { Module, OnModuleInit } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WeatherHandler } from './ai/handler/weather_handler.service';
 import { RegistryService } from './ai/registry/registry.service';
@@ -17,15 +17,30 @@ import "dotenv/config";
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DATABASE_HOST,
-      port: parseInt(process.env.DATABASE_PORT || '3306'),
-      username: process.env.DATABASE_USER,
-      password: process.env.DATABASE_PWD,
-      database: 'our_vilage',
-      entities: [BusRoute],
-      synchronize: false,
+    // TypeOrmModule.forRoot({
+    //   type: 'mysql',
+    //   host: process.env.DATABASE_HOST,
+    //   port: 3306,
+    //   username: process.env.DATABASE_USER,
+    //   password: process.env.DATABASE_PWD,
+    //   database: 'our_vilage',
+    //   entities: [BusRoute],
+    //   synchronize: false,
+    // }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => (
+        {
+          type: 'mysql',
+          host: configService.get('DATABASE_HOST'),
+          port: 3306,
+          username: configService.get('DATABASE_USER'),
+          password: configService.get('DATABASE_PWD'),
+          database: 'our_vilage',
+          entities: [BusRoute],
+          synchronize: false
+        }
+      )
     }),
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.production.local'],
