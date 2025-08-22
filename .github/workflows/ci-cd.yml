@@ -88,6 +88,7 @@ jobs:
           DATABASE_PORT=${{ secrets.DATABASE_PORT }}
           DATABASE_USER=${{ secrets.DATABASE_USER }}
           DATABASE_HOST=${{ secrets.DATABASE_HOST }}
+          DATA_DREAM_API_KEY=${{ secrets.DATA_DREAM_API_KEY }}
 
   # deploy:
   #   needs: build-and-push

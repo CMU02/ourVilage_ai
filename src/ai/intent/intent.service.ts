@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { intentSystemPrompt } from '../prompt/ai.prompt';
+import { intentSystemPrompt, intentSystemPromptV2 } from '../prompt/ai.prompt';
 import { safeParseJson } from '../utils/safe_parse_json';
 import { isIntentLabel } from '../utils/is_intent_label';
 import OpenAI from 'openai';
@@ -13,9 +13,9 @@ export class IntentService {
 
   async intent(userQuestion: string): Promise<IntentResult> {
     const completion = await this.client.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: 'gpt-4o-mini',
       messages: [
-        { role: 'system', content: intentSystemPrompt },
+        { role: 'system', content: intentSystemPromptV2 },
         { role: 'user', content: userQuestion },
       ],
       temperature: 0.0,
@@ -31,6 +31,8 @@ export class IntentService {
       !Array.isArray(parsed.meta)
         ? parsed.meta
         : {};
+
+    console.log(intent, metadata);
 
     return { intent, meta: metadata };
   }

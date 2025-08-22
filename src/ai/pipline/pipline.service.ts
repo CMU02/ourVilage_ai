@@ -8,7 +8,7 @@ export class PiplineService {
   constructor(
     private readonly intentService: IntentService,
     private readonly registry: RegistryService,
-  ) {}
+  ) { }
 
   async handleUserQuery(
     userQuestion: string,
@@ -20,7 +20,7 @@ export class PiplineService {
     if (!handler) {
       return {
         message:
-          '그건 아직 잘 모르겠어요. 날씨/버스/약국 관련 질문이라면 더 도와줄 수 있어요!',
+          '그건 아직 잘 모르겠어요. 날씨/버스/약국/지역화폐 관련 질문이라면 더 도와줄 수 있어요!',
       };
     }
 

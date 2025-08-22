@@ -13,4 +13,8 @@ export class RegistryService {
     get(intent: IntentLabel): DomainHandler | undefined {
         return this.map.get(intent)
     }
+
+    getAllRegistered(): string[] {
+        return Array.from(this.map.keys());
+    }
 }
