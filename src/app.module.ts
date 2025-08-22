@@ -16,6 +16,8 @@ import { BusRouteModule } from './bus_route/bus_route.module';
 import { LocalCurrencyModule } from './local-currency/local_currency.module';
 import { WeatherModule } from './weather/weather.module';
 import { LocalCurrencyHandler } from './ai/handler/local_currency_handler.service';
+import { NeighborhoodModule } from './neighborhood/neighborhood.module';
+import { Neighborhood } from './neighborhood/neighborhood.entity';
 
 @Module({
   imports: [
@@ -30,7 +32,7 @@ import { LocalCurrencyHandler } from './ai/handler/local_currency_handler.servic
       username: process.env.DATABASE_USER,
       password: process.env.DATABASE_PWD,
       database: 'our_vilage',
-      entities: [BusRoute],
+      entities: [BusRoute, Neighborhood],
       synchronize: false,
     }),
     BusRouteModule,
@@ -39,7 +41,8 @@ import { LocalCurrencyHandler } from './ai/handler/local_currency_handler.servic
     PiplineModule,
     HandlerModule,
     RegistryModule,
-    LocalCurrencyModule
+    LocalCurrencyModule,
+    NeighborhoodModule
   ],
   controllers: [AppController],
   providers: [AppService],

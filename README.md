@@ -75,7 +75,9 @@ AI 챗봇에게 질문하기
         "name": "맛있는 식당",
         "industry": "한식",
         "region": "부천시",
-        "address": "경기도 부천시 원미구 ..."
+        "address": "경기도 부천시 원미구 ...",
+        "lat": "37.4980391606",
+				"lng": "126.7803162890"
       }
     ],
     "token": 150
@@ -279,6 +281,87 @@ GET /bus-route/listByBusNumber?busNumber=7016
 - `01`: 계속사업자 (운영 중)
 - `02`: 휴업자
 - `03`: 폐업자
+
+---
+
+## 행정구역
+### GET /neighborhood/city
+행정구역 데이터 정보 조회
+
+**Response**
+```json
+{
+	"cities": [
+		{
+			"name": "서울특별시",
+			"city_seconds": [
+				{
+					"name": "",
+					"city_thirds": [
+						""
+					]
+				},
+				{
+					"name": "종로구",
+					"city_thirds": [
+						"",
+						"청운효자동",
+						"사직동",
+						"삼청동",
+						"부암동",
+						"평창동",
+						"무악동",
+						"교남동",
+						"가회동",
+						"종로1.2.3.4가동",
+						"종로5.6가동",
+						"이화동",
+						"혜화동",
+						"창신제1동",
+						"창신제2동",
+						"창신제3동",
+						"숭인제1동",
+						"숭인제2동"
+					]
+				},
+      // ...
+    }
+  ]
+}
+```
+
+### POST /neighborhood/get-city-data
+행정구역 데이터 좌표 조회
+
+**Request Body**
+```json
+{
+	"first" : "서울특별시",
+	"second": "성동구",
+	"third": "마장동"
+}
+```
+
+**Parameters**
+- 'first': 시/도
+- 'second': 시/군/구
+- 'third': 읍/면/리
+
+**Response**
+```json
+{
+	"grid_x": "61",
+	"grid_y": "127",
+	"logt_hour": "127",
+	"logt_minute": "2",
+	"logt_second": "51.23",
+	"lat_hour": "37",
+	"lat_minute": "33",
+	"lat_second": "48.36",
+	"logt_second_100": "127.047563888888",
+	"lat_second_100": "37.5634333333333"
+}
+```
 
 ---
 
