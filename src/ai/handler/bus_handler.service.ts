@@ -25,7 +25,7 @@ export class BusHandler implements DomainHandler {
             throw new HttpException('버스번호가 필요합니다.', HttpStatus.BAD_REQUEST);
         }
 
-        console.log(`버스 번호 검색: ${busNumber}`);
+        // console.log(`버스 번호 검색: ${busNumber}`);
 
         const busRouteInfo = await this.busRouteService.findOneByBusNumber(busNumber).then((data) => {
             if (!data) {
@@ -55,7 +55,7 @@ export class BusHandler implements DomainHandler {
         const busRoute = snapshot.busRoute as BusRouteResponse;
         const busPositionData = snapshot.busPosition as unknown as BusResponse<BusPosByRtid>;
 
-        console.log('버스 위치 데이터:', JSON.stringify(busPositionData, null, 2));
+        // console.log('버스 위치 데이터:', JSON.stringify(busPositionData, null, 2));
 
         // 안전한 null 체크
         const itemList = busPositionData?.msgBody?.itemList || [];
