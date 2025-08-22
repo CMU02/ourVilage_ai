@@ -10,14 +10,17 @@ export class WeatherController {
   getUrltraShortTermForecast(
     @Query('nx') nx: number,
     @Query('ny') ny: number,
+    @Query('base_date') base_date: string,
+    @Query('base_time') base_time: string,
   ): Promise<WeatherResponse<UltraShortTermForecast>> {
-    return this.weatherService.getUltraShortTermForecast(nx, ny);
+    return this.weatherService.getUltraShortTermForecast(nx, ny, base_date, base_time);
   }
 
   @Get('/version')
   getForecastVersion(
-    @Query('ftype') ftype: 'ODAM' | 'VSRT' | 'SHRT'
+    @Query('ftype') ftype: 'ODAM' | 'VSRT' | 'SHRT',
+    @Query('base_datetime') base_datetime: string
   ): Promise<WeatherResponse<ForecastVersion>> {
-    return this.weatherService.getForecastVersion(ftype)
+    return this.weatherService.getForecastVersion(ftype, base_datetime)
   }
 }

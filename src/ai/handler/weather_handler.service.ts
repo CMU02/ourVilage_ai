@@ -5,6 +5,7 @@ import { WeatherService } from "src/weather/weather.service";
 import { UltraShortTermRealTime } from "src/weather/types/weather.types";
 import { formatPrecipitationAmount, getWindSpeedInformation, mapPrecipitationType, SimpleWindDirection } from "src/weather/utils/weather.util";
 import OpenAI from "openai";
+import { getKrTime } from "src/weather/utils/krTime.util";
 
 @Injectable()
 export class WeatherHandler implements DomainHandler {
@@ -17,13 +18,18 @@ export class WeatherHandler implements DomainHandler {
         apiKey: process.env.OPENAI_API_KEY
     })
 
+    private krtime = getKrTime();
+
     async fetch(ctx: DomainContext) {
         if (!ctx.coords) {
             throw new HttpException('날씨 좌표 파라미터가 없습니다.', HttpStatus.BAD_REQUEST)
         }
 
         const { nx, ny } = ctx.coords;
-        const response = await this.weatherServcie.getUltraShortTermRealTime(nx, ny);
+        const base_date = this.krtime.slice(0, 10).replace(/-/g, "");
+        const base_time = this.krtime.slice(11, 12) + '00';
+
+        const response = await this.weatherServcie.getUltraShortTermRealTime(nx, ny, base_date, base_time);
         return response.response.body.items.item as Array<UltraShortTermRealTime>;
     }
 
@@ -37,7 +43,8 @@ export class WeatherHandler implements DomainHandler {
         const pty = get("PTY"); // 강수형태
         const wsd = get("WSD"); // 풍속
 
-        const version = this.weatherServcie.getForecastVersion("ODAM"); // 초단기실황 버전 조회
+        const base_datetime = this.krtime.slice(0, 10).replace(/-/g, "") + this.krtime.slice(11, 12) + '00';
+        const version = this.weatherServcie.getForecastVersion("ODAM", base_datetime); // 초단기실황 버전 조회
 
         const result: Record<string, unknown> = {
             version,

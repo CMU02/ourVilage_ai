@@ -93,12 +93,14 @@ AI 챗봇에게 질문하기
 
 ## 날씨 정보
 
-### GET /weather/ultra-short-realtime
+### GET /weather/ultra-short-forecast
 초단기 예보 조회
 
 **Query Parameters**
 - `nx` (number, required): 격자 X 좌표
 - `ny` (number, required): 격자 Y 좌표
+- 'base_date` (string, required): 기준 날짜 (ex: 20250822)
+- `base_time` (string, required): 기준 시간 (ex: 2030)
 
 **Example Request**
 ```
