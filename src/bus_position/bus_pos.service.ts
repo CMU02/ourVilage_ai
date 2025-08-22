@@ -16,10 +16,22 @@ export class BusPosService {
   async getBusPosByRtidList(
     busRouteId: string,
   ): Promise<BusResponse<BusPosByRtid>> {
-    const response = await this.client.get('/getBusPosByRtid', {
-      params: { busRouteId },
-    });
+    console.log(`버스 위치 API 호출: busRouteId=${busRouteId}`);
+    
+    try {
+      const response = await this.client.get('/getBusPosByRtid', {
+        params: { busRouteId },
+      });
 
-    return response.data;
+      console.log('버스 위치 API 응답:', JSON.stringify(response.data, null, 2));
+      return response.data;
+    } catch (error) {
+      console.error('버스 위치 API 호출 오류:', error);
+      // 기본 응답 구조 반환
+      return {
+        msgHeader: { headerMsg: 'API 호출 실패', headerCd: '4', itemCount: 0 },
+        msgBody: { itemList: [] }
+      } as unknown as BusResponse<BusPosByRtid>;
+    }
   }
 }

@@ -25,9 +25,12 @@ export class BusHandler implements DomainHandler {
             throw new HttpException('버스번호가 필요합니다.', HttpStatus.BAD_REQUEST);
         }
 
+        console.log(`버스 번호 검색: ${busNumber}`);
+
         const busRouteInfo = await this.busRouteService.findOneByBusNumber(busNumber).then((data) => {
             if (!data) {
-                throw new HttpException(`버스노선정보 받아오는 과정에서 오류`, HttpStatus.INTERNAL_SERVER_ERROR);
+                console.log(`버스 번호 ${busNumber}에 대한 노선 정보를 찾을 수 없습니다.`);
+                throw new HttpException(`${busNumber}번 버스 노선 정보를 찾을 수 없습니다. 버스 번호를 다시 확인해주세요.`, HttpStatus.NOT_FOUND);
             }
             return data;
         })
@@ -52,8 +55,18 @@ export class BusHandler implements DomainHandler {
         const busRoute = snapshot.busRoute as BusRouteResponse;
         const busPositionData = snapshot.busPosition as unknown as BusResponse<BusPosByRtid>;
 
-        const runningBuses = busPositionData.msgBody.itemList.filter(bus => bus.isrunyn === "1");
+        console.log('버스 위치 데이터:', JSON.stringify(busPositionData, null, 2));
+
+        // 안전한 null 체크
+        const itemList = busPositionData?.msgBody?.itemList || [];
+        const runningBuses = itemList.filter(bus => bus.isrunyn === "1");
         const busCount = runningBuses.length;
+
+        // 버스 위치 데이터 상태 확인
+        const hasPositionData = itemList.length > 0;
+        const statusMessage = hasPositionData 
+            ? `현재 운행 중인 버스: ${busCount}대`
+            : '현재 실시간 위치 정보를 가져올 수 없습니다';
 
         const systemPrompt = `
             당신은 버스 정보를 제공하는 친절한 AI 어시스턴트입니다.
@@ -63,9 +76,12 @@ export class BusHandler implements DomainHandler {
             - 노선명: ${busRoute.bus_route_name}
             - 도시: ${busRoute.bus_route_city}
 
-            현재 운행 중인 버스: ${busCount}대
+            ${statusMessage}
 
-            응답 형식: "${busRoute.bus_route_name}번 버스들이 현재 ${busCount}대 운행 중입니다."와 같이 자연스럽게 답변해주세요.
+            ${hasPositionData 
+                ? `응답 형식: "${busRoute.bus_route_name}번 버스들이 현재 ${busCount}대 운행 중입니다."와 같이 자연스럽게 답변해주세요.`
+                : `응답 형식: "${busRoute.bus_route_name}번 버스 노선은 존재하지만 현재 실시간 위치 정보를 확인할 수 없습니다."와 같이 안내해주세요.`
+            }
         `;
 
         try {
@@ -79,8 +95,11 @@ export class BusHandler implements DomainHandler {
                 max_tokens: 200
             });
 
-            const aiMessage = completion.choices[0]?.message?.content ||
-                `${busRoute.bus_route_name}번 버스들이 현재 ${busCount}대 운행 중입니다.`;
+            const defaultMessage = hasPositionData 
+                ? `${busRoute.bus_route_name}번 버스들이 현재 ${busCount}대 운행 중입니다.`
+                : `${busRoute.bus_route_name}번 버스 노선은 존재하지만 현재 실시간 위치 정보를 확인할 수 없습니다.`;
+
+            const aiMessage = completion.choices[0]?.message?.content || defaultMessage;
 
             return {
                 message: aiMessage,
@@ -106,8 +125,12 @@ export class BusHandler implements DomainHandler {
             };
         } catch (error) {
             // OpenAI API 호출 실패 시 기본 메시지 반환
+            const fallbackMessage = hasPositionData 
+                ? `${busRoute.bus_route_name}번 버스들이 현재 ${busCount}대 운행 중입니다.`
+                : `${busRoute.bus_route_name}번 버스 노선은 존재하지만 현재 실시간 위치 정보를 확인할 수 없습니다.`;
+                
             return {
-                message: `${busRoute.bus_route_name}번 버스들이 현재 ${busCount}대 운행 중입니다.`,
+                message: fallbackMessage,
                 meta: {
                     busRoute: busRoute,
                     runningBusCount: busCount,

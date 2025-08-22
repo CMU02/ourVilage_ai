@@ -15,7 +15,7 @@ export class IntentService {
     const completion = await this.client.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
-        { role: 'system', content: intentSystemPromptV2 },
+        { role: 'system', content: intentSystemPrompt },
         { role: 'user', content: userQuestion },
       ],
       temperature: 0.0,
@@ -27,8 +27,8 @@ export class IntentService {
     const intent = isIntentLabel(parsed.intent) ? parsed.intent : '기타';
     const metadata =
       parsed.meta &&
-      typeof parsed.meta === 'object' &&
-      !Array.isArray(parsed.meta)
+        typeof parsed.meta === 'object' &&
+        !Array.isArray(parsed.meta)
         ? parsed.meta
         : {};
 
