@@ -85,6 +85,7 @@ export class BusHandler implements DomainHandler {
             return {
                 message: aiMessage,
                 meta: {
+                    intent: 'bus',
                     busRoute: busRoute,
                     runningBusCount: busCount,
                     busPositions: runningBuses.map(bus => ({
