@@ -84,7 +84,8 @@ export class LocalCurrencyHandler implements DomainHandler {
             apiResult: result,
             storesByRegion,
             storesByIndustry,
-            stores: activeStores.slice(0, 10) // 상위 10개만 포함 (토큰 절약)
+            // stores: activeStores.slice(0, 10) // 상위 10개만 포함 (토큰 절약)
+            stores: activeStores
         };
 
         console.log('LocalCurrency normalize - final result:', {
@@ -154,7 +155,7 @@ export class LocalCurrencyHandler implements DomainHandler {
                     totalStores: activeStoreCount,
                     regionCount: Object.keys(storesByRegion).length,
                     industryCount: Object.keys(storesByIndustry).length,
-                    topStores: (stores as LocalCurrencyStore[]).slice(0, 5).map(store => ({
+                    topStores: (stores as LocalCurrencyStore[]).map(store => ({
                         name: store.CMPNM_NM,
                         industry: store.INDUTYPE_NM,
                         region: store.SIGUN_NM,
