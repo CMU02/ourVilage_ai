@@ -93,7 +93,7 @@ AI 챗봇에게 질문하기
 
 ## 날씨 정보
 
-### GET /weather/ultra-short-forecast
+### GET /weather/ultra-short-realtime
 초단기 예보 조회
 
 **Query Parameters**

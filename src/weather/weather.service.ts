@@ -7,11 +7,29 @@ import {
   WeatherResponse,
 } from './types/weather.types';
 
+
 @Injectable()
 export class WeatherService {
   private BASE_URL: string =
     'http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0';
-  private currentDateTime: string = new Date().toISOString();
+  private getCurrentDateTime() {
+    // 한국 시간(KST, UTC+9)으로 현재 시간 가져오기
+    const now = new Date();
+
+    // 한국 시간대로 변환
+    const kstTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
+
+    // YYYY-MM-DDTHH:mm:ss 형태로 포맷팅
+    const year = kstTime.getFullYear();
+    const month = String(kstTime.getMonth() + 1).padStart(2, '0');
+    const day = String(kstTime.getDate()).padStart(2, '0');
+    const hours = String(kstTime.getHours()).padStart(2, '0');
+    const minutes = String(kstTime.getMinutes()).padStart(2, '0');
+    const seconds = String(kstTime.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+  }
+
   private client = axios.create({
     baseURL: this.BASE_URL,
     params: {
@@ -31,16 +49,20 @@ export class WeatherService {
     nx: number,
     ny: number,
   ): Promise<WeatherResponse<UltraShortTermRealTime>> {
+    const currentDateTime = this.getCurrentDateTime();
+    const baseDate = currentDateTime.slice(0, 10).replace(/-/g, "");
+    const baseTime = currentDateTime.slice(11, 16).replace(":", "");
+
     const { data } = await this.client.get('/getUltraSrtNcst', {
       params: {
         nx,
         ny,
-        base_date: this.currentDateTime.slice(0, 10).replace(/-/g, ''),
-        base_time: this.currentDateTime.slice(11, 16).replace(':', ''),
+        base_date: baseDate,
+        base_time: baseTime,
       },
     });
 
-    return data;
+    return data.response.body.items;
   }
 
   /**
@@ -52,15 +74,19 @@ export class WeatherService {
     nx: number,
     ny: number
   ): Promise<WeatherResponse<UltraShortTermForecast>> {
-    const { data } = await this.client.get("getUltraSrtFcst", {
+    const currentDateTime = this.getCurrentDateTime();
+    const baseDate = currentDateTime.slice(0, 10).replace(/-/g, "");
+    const baseTime = currentDateTime.slice(11, 16).replace(":", "");
+
+    const { data } = await this.client.get("/getUltraSrtFcst", {
       params: {
         nx,
         ny,
-        base_date: this.currentDateTime.slice(0, 10).replace(/-/g, ""),
-        base_time: this.currentDateTime.slice(11, 16).replace(":", ""),
+        base_date: baseDate,
+        base_time: baseTime,
       },
     });
-  
+
     return data.response.body.items;
   };
 
@@ -70,12 +96,14 @@ export class WeatherService {
   async getForecastVersion(
     ftype: 'ODAM' | 'VSRT' | 'SHRT',
   ): Promise<WeatherResponse<ForecastVersion>> {
+    const currentDateTime = this.getCurrentDateTime();
+    const basedatetime = currentDateTime.slice(0, 10).replace(/-/g, '') +
+      currentDateTime.slice(11, 16).replace(':', '');
+
     const { data } = await this.client.get('/getFcstVersion', {
       params: {
         ftype,
-        basedatetime:
-          this.currentDateTime.slice(0, 10).replace(/-/g, '') +
-          this.currentDateTime.slice(11, 16).replace(':', ''),
+        basedatetime,
       },
     });
 
