@@ -87,8 +87,6 @@ AI 챗봇에게 질문하기
 - 날씨: "오늘 날씨 어때?", "비 와?"
 - 버스: "7016번 버스 언제 와?", "금천우체국 정류장"
 - 지역화폐: "부천시 지역화폐 가맹점", "음식점에서 지역화폐 써?"
-- 약국: "당번 약국 어디야?"
-
 ---
 
 ## 날씨 정보
@@ -108,29 +106,28 @@ GET /weather/ultra-short-forecast?nx=55&ny=124
 **Response**
 ```json
 {
-  "response": {
-    "header": {
-      "resultCode": "00",
-      "resultMsg": "NORMAL_SERVICE"
-    },
-    "body": {
-      "dataType": "JSON",
-      "items": {
-        "item": [
-          {
-            "baseDate": "20250822",
-            "baseTime": "1000",
-            "category": "T1H",
-            "fcstDate": "20250822",
-            "fcstTime": "1100",
-            "fcstValue": "25",
-            "nx": 55,
-            "ny": 124
-          }
-        ]
-      }
-    }
-  }
+	"item": [
+		{
+			"baseDate": "20250822",
+			"baseTime": "0330",
+			"category": "LGT",
+			"fcstDate": "20250822",
+			"fcstTime": "0400",
+			"fcstValue": "0",
+			"nx": 57,
+			"ny": 127
+		},
+		{
+			"baseDate": "20250822",
+			"baseTime": "0330",
+			"category": "LGT",
+			"fcstDate": "20250822",
+			"fcstTime": "0500",
+			"fcstValue": "0",
+			"nx": 57,
+			"ny": 127
+		},
+  ]
 }
 ```
 
@@ -146,6 +143,17 @@ GET /weather/ultra-short-forecast?nx=55&ny=124
 **Example Request**
 ```
 GET /weather/version?ftype=ODAM
+```
+**Response**
+```json
+{
+	"item": [
+		{
+			"filetype": "ODAM",
+			"version": "20250821045605"
+		}
+	]
+}
 ```
 
 ---
@@ -190,11 +198,24 @@ GET /bus-route/listByBusNumber?busNumber=7016
 
 **Response**
 ```json
-{
-  "bus_route_id": "234000001",
-  "bus_route_name": "7016",
-  "bus_route_city": "부천시"
-}
+[
+  {
+		"bus_route_id": "100100010",
+		"bus_route_name": "105",
+		"bus_route_city": "seoul"
+	},
+  {
+		"bus_route_id": "100100012",
+		"bus_route_name": "107",
+		"bus_route_city": "seoul"
+	},
+	{
+		"bus_route_id": "100100014",
+		"bus_route_name": "109",
+		"bus_route_city": "seoul"
+	},
+  // ...
+]
 ```
 
 ---
@@ -285,7 +306,7 @@ GET /bus-route/listByBusNumber?busNumber=7016
 
 ### 1. AI 챗봇으로 날씨 문의
 ```bash
-curl -X POST https://your-domain.com/chatbot/ask \
+curl -X POST https://server.cieloblu.co.kr/chatbot/ask \
   -H "Content-Type: application/json" \
   -d '{
     "userQuestion": "오늘 날씨 어때?",
@@ -295,7 +316,7 @@ curl -X POST https://your-domain.com/chatbot/ask \
 
 ### 2. 지역화폐 가맹점 검색
 ```bash
-curl -X POST https://your-domain.com/local-currency/search \
+curl -X POST https://server.cieloblu.co.kr/local-currency/search \
   -H "Content-Type: application/json" \
   -d '{
     "pIndex": 1,
@@ -307,7 +328,7 @@ curl -X POST https://your-domain.com/local-currency/search \
 
 ### 3. 버스 노선 조회
 ```bash
-curl "https://your-domain.com/bus-route/listByBusNumber?busNumber=7016"
+curl "https://server.cieloblu.co.kr/bus-route/listByBusNumber?busNumber=7016"
 ```
 
 ---
