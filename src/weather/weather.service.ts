@@ -51,18 +51,19 @@ export class WeatherService {
   ): Promise<WeatherResponse<UltraShortTermRealTime>> {
     const currentDateTime = this.getCurrentDateTime();
     const baseDate = currentDateTime.slice(0, 10).replace(/-/g, "");
-    const baseTime = currentDateTime.slice(11, 16).replace(":", "");
+    const baseTime = currentDateTime.slice(11, 12);
 
     const { data } = await this.client.get('/getUltraSrtNcst', {
       params: {
+        numOfRows: 100,
         nx,
         ny,
         base_date: baseDate,
-        base_time: baseTime,
+        base_time: baseTime + '00',
       },
     });
 
-    return data.response.body.items;
+    return data;
   }
 
   /**
@@ -76,18 +77,19 @@ export class WeatherService {
   ): Promise<WeatherResponse<UltraShortTermForecast>> {
     const currentDateTime = this.getCurrentDateTime();
     const baseDate = currentDateTime.slice(0, 10).replace(/-/g, "");
-    const baseTime = currentDateTime.slice(11, 16).replace(":", "");
+    const baseTime = currentDateTime.slice(11, 12);
 
     const { data } = await this.client.get("/getUltraSrtFcst", {
       params: {
+        numOfRows: 100,
         nx,
         ny,
         base_date: baseDate,
-        base_time: baseTime,
+        base_time: baseTime + '30',
       },
     });
 
-    return data.response.body.items;
+    return data;
   };
 
   /**

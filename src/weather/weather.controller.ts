@@ -6,12 +6,12 @@ import { ForecastVersion, UltraShortTermForecast, UltraShortTermRealTime, Weathe
 export class WeatherController {
   constructor(private readonly weatherService: WeatherService) {}
 
-  @Get('/ultra-short-realtime')
+  @Get('/ultra-short-forecast')
   getUrltraShortTermForecast(
     @Query('nx') nx: number,
     @Query('ny') ny: number,
-  ): Promise<WeatherResponse<UltraShortTermRealTime>> {
-    return this.weatherService.getUltraShortTermRealTime(nx, ny);
+  ): Promise<WeatherResponse<UltraShortTermForecast>> {
+    return this.weatherService.getUltraShortTermForecast(nx, ny);
   }
 
   @Get('/version')
