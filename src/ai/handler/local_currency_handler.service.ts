@@ -41,22 +41,10 @@ export class LocalCurrencyHandler implements DomainHandler {
     async normalize(raw: ParsedLocalCurrencyData, ctx: DomainContext): Promise<Record<string, unknown>> {
         const { stores, totalCount, result } = raw;
 
-        console.log('LocalCurrency normalize - raw data:', {
-            totalCount,
-            storesLength: stores?.length,
-            firstStore: stores?.[0],
-            sampleStates: stores?.slice(0, 3).map(s => s.LEAD_TAX_MAN_STATE)
-        });
-
         // 운영 중인 가맹점만 필터링 (폐업하지 않은 곳)
         const activeStores = stores.filter(store =>
             store.LEAD_TAX_MAN_STATE_CD === '01' && !store.CLSBIZ_DAY
         );
-
-        console.log('LocalCurrency normalize - after filtering:', {
-            activeStoresLength: activeStores.length,
-            originalLength: stores?.length
-        });
 
         // 지역별로 그룹화
         const storesByRegion = activeStores.reduce((acc, store) => {
@@ -87,13 +75,6 @@ export class LocalCurrencyHandler implements DomainHandler {
             // stores: activeStores.slice(0, 10) // 상위 10개만 포함 (토큰 절약)
             stores: activeStores
         };
-
-        console.log('LocalCurrency normalize - final result:', {
-            activeStoreCount: normalizedResult.activeStoreCount,
-            regionCount: Object.keys(storesByRegion).length,
-            industryCount: Object.keys(storesByIndustry).length
-        });
-
         return normalizedResult;
     }
 

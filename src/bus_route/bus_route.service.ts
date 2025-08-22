@@ -56,14 +56,12 @@ export class BusRouteService {
       );
     }
     
-    console.log(`데이터베이스에서 버스 번호 검색: ${busNumber}`);
     
     // 정확한 매치 먼저 시도
     let data = await this.busRouteRepository.findOneBy({ route_name: busNumber });
     
     // 정확한 매치가 없으면 대소문자 구분 없이 검색
     if (!data) {
-      console.log(`정확한 매치 없음, 대소문자 구분 없이 검색: ${busNumber}`);
       data = await this.busRouteRepository
         .createQueryBuilder('bus_route')
         .where('UPPER(bus_route.route_name) = UPPER(:busNumber)', { busNumber })
@@ -73,7 +71,6 @@ export class BusRouteService {
     // 여전히 없으면 공백 제거 후 검색
     if (!data) {
       const trimmedBusNumber = busNumber.replace(/\s+/g, '');
-      console.log(`공백 제거 후 검색: ${trimmedBusNumber}`);
       data = await this.busRouteRepository
         .createQueryBuilder('bus_route')
         .where('UPPER(REPLACE(bus_route.route_name, \' \', \'\')) = UPPER(:trimmedBusNumber)', { trimmedBusNumber })
@@ -82,7 +79,6 @@ export class BusRouteService {
     
     // LIKE 검색으로 부분 매칭 시도 (5522A난곡 -> 5522A% 패턴)
     if (!data) {
-      console.log(`LIKE 검색 시도: ${busNumber}`);
       data = await this.busRouteRepository
         .createQueryBuilder('bus_route')
         .where('UPPER(bus_route.route_name) LIKE UPPER(:pattern)', { pattern: `${busNumber}%` })
@@ -93,7 +89,6 @@ export class BusRouteService {
     if (!data) {
       const basePattern = busNumber.match(/^(\d+[A-Za-z]+)/)?.[1];
       if (basePattern) {
-        console.log(`기본 패턴으로 검색: ${basePattern}`);
         data = await this.busRouteRepository
           .createQueryBuilder('bus_route')
           .where('UPPER(bus_route.route_name) LIKE UPPER(:pattern)', { pattern: `${basePattern}%` })
@@ -104,7 +99,6 @@ export class BusRouteService {
     // 하이픈이나 특수문자 제거 후 검색 (5522-A난곡 -> 5522A난곡)
     if (!data) {
       const normalizedBusNumber = busNumber.replace(/[-_\s]/g, '');
-      console.log(`특수문자 제거 후 검색: ${normalizedBusNumber}`);
       data = await this.busRouteRepository
         .createQueryBuilder('bus_route')
         .where('UPPER(REPLACE(REPLACE(REPLACE(bus_route.route_name, \'-\', \'\'), \'_\', \'\'), \' \', \'\')) = UPPER(:normalizedBusNumber)', { normalizedBusNumber })
@@ -113,7 +107,6 @@ export class BusRouteService {
     
     // 역방향 검색: 데이터베이스의 버스명이 입력값을 포함하는지 확인
     if (!data) {
-      console.log(`역방향 LIKE 검색: %${busNumber}%`);
       data = await this.busRouteRepository
         .createQueryBuilder('bus_route')
         .where('UPPER(bus_route.route_name) LIKE UPPER(:pattern)', { pattern: `%${busNumber}%` })
@@ -123,11 +116,8 @@ export class BusRouteService {
     if (!data) {
       // 유사한 버스 번호들을 찾아서 로그로 출력
       const similarBuses = await this.findSimilarBusNumbers(busNumber);
-      console.log(`데이터베이스에서 버스 번호 ${busNumber}를 찾을 수 없습니다.`);
-      console.log(`유사한 버스 번호들:`, similarBuses.map(bus => bus.route_name));
       return null;
     } else {
-      console.log(`버스 번호 ${busNumber} 찾음: ${data.route_id} (실제 이름: ${data.route_name})`);
       return new BusRouteResponse().toEntity(data);
     }
   }

@@ -32,8 +32,6 @@ export class IntentService {
         ? parsed.meta
         : {};
 
-    console.log(intent, metadata);
-
     return { intent, meta: metadata };
   }
 }

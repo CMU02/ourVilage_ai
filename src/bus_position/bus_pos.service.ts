@@ -15,15 +15,12 @@ export class BusPosService {
 
   async getBusPosByRtidList(
     busRouteId: string,
-  ): Promise<BusResponse<BusPosByRtid>> {
-    console.log(`버스 위치 API 호출: busRouteId=${busRouteId}`);
-    
+  ): Promise<BusResponse<BusPosByRtid>> {    
     try {
       const response = await this.client.get('/getBusPosByRtid', {
         params: { busRouteId },
       });
 
-      console.log('버스 위치 API 응답:', JSON.stringify(response.data, null, 2));
       return response.data;
     } catch (error) {
       console.error('버스 위치 API 호출 오류:', error);
